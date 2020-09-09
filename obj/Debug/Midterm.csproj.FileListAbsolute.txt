@@ -18,3 +18,5 @@ C:\Users\leafc\source\repos\SE245_Customer_Lab_FCollins\obj\Debug\Midterm.pdb
 C:\Users\leafc\source\repos\SE245_Customer_Lab_FCollins\bin\Debug\Midterm.exe.config
 C:\Users\leafc\source\repos\SE245_Customer_Lab_FCollins\bin\Debug\Midterm.exe
 C:\Users\leafc\source\repos\SE245_Customer_Lab_FCollins\bin\Debug\Midterm.pdb
+C:\Users\leafc\source\repos\SE245_Customer_Lab_FCollins\obj\Debug\Midterm.Menu.resources
+C:\Users\leafc\source\repos\SE245_Customer_Lab_FCollins\obj\Debug\Midterm.Search.resources

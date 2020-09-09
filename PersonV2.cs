@@ -1,9 +1,11 @@
-﻿using System;
+﻿//import needed libraries
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace Midterm {
     
@@ -11,7 +13,8 @@ namespace Midterm {
     class PersonV2 : Person {
 
         //define object properties
-       private String cellPhone, instagramURL;
+        private String cellPhone, instagramURL;
+        private String connectionString = @"Server=sql.neit.edu\sqlstudentserver,4500;Database=SE245_FCollins;User Id=SE245_FCollins;Password=008006819;";
 
         //constructor sets default property values
         public PersonV2() {
@@ -79,20 +82,17 @@ namespace Midterm {
             SqlConnection Conn = new SqlConnection();
 
             //Initialize it's properties
-            Conn.ConnectionString = @"Server=sql.neit.edu\sqlstudentserver,4500;Database=SE245_FCollins;User Id=SE245_FCollins;Password=008006819;";     //Set the Who/What/Where of DB
+            Conn.ConnectionString = connectionString;
 
-
-            //*******************************************************************************************************
-            // NEW
-            //*******************************************************************************************************
             string strSQL = "INSERT INTO PersonV2 (FirstName, MiddleName, LastName, Street1, Street2, City, State, Zip, Phone, Cell, Email, Instagram) " +
                             "VALUES (@FirstName, @MiddleName, @LastName, @Street1, @Street2, @City, @State, @Zip, @Phone, @Cell, @Email, @Instagram)";
-            // Bark out our command
+            
+            //Create command
             SqlCommand comm = new SqlCommand();
-            comm.CommandText = strSQL;  //Commander knows what to say
-            comm.Connection = Conn;     //Where's the phone?  Here it is
+            comm.CommandText = strSQL;
+            comm.Connection = Conn;   
 
-            //Fill in the paramters (Has to be created in same sequence as they are used in SQL Statement)
+            //Fill in the paramters
             comm.Parameters.AddWithValue("@FirstName", FirstName);
             comm.Parameters.AddWithValue("@MiddleName", MiddleName);
             comm.Parameters.AddWithValue("@LastName", LastName);
@@ -106,19 +106,17 @@ namespace Midterm {
             comm.Parameters.AddWithValue("@Email", Email);
             comm.Parameters.AddWithValue("@Instagram", InstagramURL);
 
-            //*******************************************************************************************************
-
-            //attempt to connect to the server
+            //try to establish a connection with the server
             try
             {
-                Conn.Open();                                        //Open connection to DB - Think of dialing a friend on phone
+                Conn.Open();                                        //Open connection
                 int intRecs = comm.ExecuteNonQuery();
-                strResult = $"SUCCESS: Inserted {intRecs} records.";       //Report that we made the connection and added a record
-                Conn.Close();                                       //Hanging up after phone call
+                strResult = $"SUCCESS: Inserted {intRecs} records.";       //Display status
+                Conn.Close();                                       //Close connection
             }
-            catch (Exception err)                                   //If we got here, there was a problem connecting to DB
+            catch (Exception err)                                   //Error handling
             {
-                strResult = "ERROR: " + err.Message;                //Set feedback to state there was an error & error info
+                strResult = "ERROR: " + err.Message;                //Set feedback to state there was an error
                 Console.WriteLine(err.Message);
             }
             finally
@@ -128,6 +126,124 @@ namespace Midterm {
             //Return resulting feedback string
             return strResult;
         }
+
+
+        //search the db by person ID
+        public DataSet FindByID(int PersonID)
+        {
+            //database tools
+            SqlConnection conn = new SqlConnection();
+            SqlCommand comm = new SqlCommand();
+            DataSet ds = new DataSet();
+            SqlDataAdapter da = new SqlDataAdapter();
+
+            //set connection properties
+            string strConn = connectionString;
+            //SQL command string to search by ID
+            string sqlString =
+           "SELECT * FROM PersonV2 WHERE PersonID = @PersonID;";
+            conn.ConnectionString = strConn;
+
+            //Give the command object info it needs
+            comm.Connection = conn;
+            comm.CommandText = sqlString;
+            comm.Parameters.AddWithValue("@PersonID", PersonID);
+            da.SelectCommand = comm;
+
+            //Open the connection and send SQL Command
+            conn.Open();
+            da.Fill(ds, "Results");
+            conn.Close();
+
+            return ds;   //Return the dataset to be used
+        }
+
+
+        public DataSet FindByName(string LastName)
+        {
+            //database tools
+            SqlConnection conn = new SqlConnection();
+            SqlCommand comm = new SqlCommand();
+            DataSet ds = new DataSet();
+            SqlDataAdapter da = new SqlDataAdapter();
+
+            //set connection properties
+            string strConn = connectionString;
+
+            //sql command to search by name
+            string sqlString =
+           "SELECT * FROM PersonV2 WHERE LastName = @LastName;";
+
+            conn.ConnectionString = strConn;
+
+            //Give the command object info it needs
+            comm.Connection = conn;
+            comm.CommandText = sqlString;
+            comm.Parameters.AddWithValue("@LastName", LastName);
+            da.SelectCommand = comm;
+
+            //Open the connection and send command
+            conn.Open();
+            da.Fill(ds, "Results");
+            conn.Close();
+
+            return ds;   
+        }
+
+        public SqlDataReader EditByID(int PersonID)
+        {
+            //database tools
+            SqlConnection conn = new SqlConnection();
+            SqlCommand comm = new SqlCommand();
+
+            //set connection properties
+            string strConn = connectionString;
+
+            //SQL command to search by ID
+            string sqlString =
+           "SELECT * FROM PersonV2 WHERE PersonID = @PersonID;";
+
+            conn.ConnectionString = strConn;
+
+            //Give the command object info it needs
+            comm.Connection = conn;
+            comm.CommandText = sqlString;
+            comm.Parameters.AddWithValue("@PersonID", PersonID);
+
+            //Open the connection and execute command, return data given
+            conn.Open();
+            return comm.ExecuteReader();
+        }
+
+        public DataSet FindAll()
+        {
+            //database tools
+            SqlConnection conn = new SqlConnection();
+            SqlCommand comm = new SqlCommand();
+            DataSet ds = new DataSet();
+            SqlDataAdapter da = new SqlDataAdapter();
+
+            //set connection properties
+            string strConn = conn.ConnectionString = @"Server=sql.neit.edu\sqlstudentserver,4500;Database=SE245_FCollins;User Id=SE245_FCollins;Password=008006819;";
+
+            //SQL command to select all
+            string sqlString =
+           "SELECT * FROM PersonV2;";
+
+            conn.ConnectionString = strConn;
+
+            //Give the command object info it needs
+            comm.Connection = conn;
+            comm.CommandText = sqlString;
+            da.SelectCommand = comm;
+
+            //open the connection and fill our table with the results
+            conn.Open();
+            da.Fill(ds, "Results");
+            conn.Close();
+            return ds;
+        }
+
 
     }
 }

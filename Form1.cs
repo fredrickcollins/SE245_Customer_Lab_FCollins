@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,31 @@ namespace Midterm
         public Form1()
         {
             InitializeComponent();
+        }
+
+        //overloaded constructor auto fills text boxes when passed a personID to edit
+        public Form1(int p)
+        {
+            InitializeComponent();
+            PersonV2 v = new PersonV2();
+            SqlDataReader d = v.EditByID(p);
+
+            while (d.Read())
+            {
+                firstnamebox.Text = d["FirstName"].ToString();
+                middlenamebox.Text = d["MiddleName"].ToString();
+                lastnamebox.Text = d["LastName"].ToString();
+                street1box.Text = d["Street1"].ToString();
+                street2box.Text = d["Street2"].ToString();
+                citybox.Text = d["City"].ToString();
+                statebox.Text = d["State"].ToString();
+                zipcodebox.Text = d["Zip"].ToString();
+                phonebox.Text = d["Phone"].ToString();
+                cellphonebox.Text = d["Cell"].ToString();
+                emailbox.Text = d["Email"].ToString();
+                instagramurlbox.Text = d["Instagram"].ToString();
+            }
+
         }
 
         //create new instance of person class
