@@ -224,8 +224,7 @@ namespace Midterm {
             SqlDataAdapter da = new SqlDataAdapter();
 
             //set connection properties
-            string strConn = conn.ConnectionString = @"Server=sql.neit.edu\sqlstudentserver,4500;Database=SE245_FCollins;User Id=SE245_FCollins;Password=008006819;";
-
+            string strConn = connectionString;
             //SQL command to select all
             string sqlString =
            "SELECT * FROM PersonV2;";
@@ -242,6 +241,105 @@ namespace Midterm {
             da.Fill(ds, "Results");
             conn.Close();
             return ds;
+        }
+
+        public string UpdatePerson(int personID)
+        {
+
+            //database tools
+            SqlConnection conn = new SqlConnection();
+            SqlCommand comm = new SqlCommand();
+            String strResult = "";
+
+            //set connection properties
+            string strConn = connectionString;
+            //SQL command to update
+            string sqlString =
+            "UPDATE PersonV2 SET FirstName = @FirstName, MiddleName = @MiddleName, LastName = @LastName, Street1 = @Street1, Street2 = @Street2," +
+            "City = @City, State = @State, Zip = @Zip, Phone = @Phone, Cell = @Cell, Email = @Email, Instagram = @Instagram WHERE PersonID = @PersonID;";
+
+            conn.ConnectionString = strConn;
+            comm.Connection = conn;
+            comm.CommandText = sqlString;
+            
+
+            //Fill in the paramters
+            comm.Parameters.AddWithValue("@FirstName", FirstName);
+            comm.Parameters.AddWithValue("@MiddleName", MiddleName);
+            comm.Parameters.AddWithValue("@LastName", LastName);
+            comm.Parameters.AddWithValue("@Street1", Street1);
+            comm.Parameters.AddWithValue("@Street2", Street2);
+            comm.Parameters.AddWithValue("@City", City);
+            comm.Parameters.AddWithValue("@State", State);
+            comm.Parameters.AddWithValue("@Zip", Zip);
+            comm.Parameters.AddWithValue("@Phone", Phone);
+            comm.Parameters.AddWithValue("@Cell", CellPhone);
+            comm.Parameters.AddWithValue("@Email", Email);
+            comm.Parameters.AddWithValue("@Instagram", InstagramURL);
+            comm.Parameters.AddWithValue("@PersonID", personID);
+
+            //try to establish a connection with the server
+            try
+            {
+                conn.Open();                                        //Open connection
+                int intRecs = comm.ExecuteNonQuery();
+                strResult = $"SUCCESS: Updated {intRecs} records.";       //Display status
+                conn.Close();                                       //Close connection
+            }
+            catch (Exception err)                                   //Error handling
+            {
+                strResult = "ERROR: " + err.Message;                //Set feedback to state there was an error
+                Console.WriteLine(err.Message);
+            }
+            finally
+            {
+
+            }
+
+            return strResult;
+        }
+
+        public string DeletePerson(int personID)
+        {
+
+            //database tools
+            SqlConnection conn = new SqlConnection();
+            SqlCommand comm = new SqlCommand();
+            String strResult = "";
+
+            //set connection properties
+            string strConn = connectionString;
+            //SQL command to delete
+            string sqlString =
+            "DELETE FROM PersonV2 WHERE PersonID = @PersonID";
+
+            conn.ConnectionString = strConn;
+            comm.Connection = conn;
+            comm.CommandText = sqlString;
+
+
+            //Fill in the paramters
+            comm.Parameters.AddWithValue("@PersonID", personID);
+
+            //try to establish a connection with the server
+            try
+            {
+                conn.Open();                                        //Open connection
+                int intRecs = comm.ExecuteNonQuery();
+                strResult = $"SUCCESS: Deleted {intRecs} records.";       //Display status
+                conn.Close();                                       //Close connection
+            }
+            catch (Exception err)                                   //Error handling
+            {
+                strResult = "ERROR: " + err.Message;                //Set feedback to state there was an error
+                Console.WriteLine(err.Message);
+            }
+            finally
+            {
+
+            }
+
+            return strResult;
         }
 
 

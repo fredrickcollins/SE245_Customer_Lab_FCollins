@@ -32,5 +32,19 @@ namespace Midterm
             Search searching = new Search();
             searching.Show();
         }
+
+        //create a new instance of the search user form using the editing mode overloaded constructor
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Search editing = new Search(true);
+            editing.Show();
+        }
+
+        //create a new instance of the search user form using the delete mode overloaded constructor
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Search deleting = new Search(1);
+            deleting.Show();
+        }
     }
 }

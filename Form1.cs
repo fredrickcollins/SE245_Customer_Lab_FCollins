@@ -15,6 +15,9 @@ namespace Midterm
     public partial class Form1 : Form
     {
 
+        bool editor = false;
+        int personID = 0;
+
         //initialize windows form using the design we layed out
         public Form1()
         {
@@ -22,12 +25,14 @@ namespace Midterm
         }
 
         //overloaded constructor auto fills text boxes when passed a personID to edit
-        public Form1(int p)
+        public Form1(int p, bool editor)
         {
             InitializeComponent();
+            this.editor = editor;
+            this.personID = p;
             PersonV2 v = new PersonV2();
             SqlDataReader d = v.EditByID(p);
-
+            
             while (d.Read())
             {
                 firstnamebox.Text = d["FirstName"].ToString();
@@ -43,6 +48,9 @@ namespace Midterm
                 emailbox.Text = d["Email"].ToString();
                 instagramurlbox.Text = d["Instagram"].ToString();
             }
+            
+            //altered user interface
+            button1.Text = "Edit Person";
 
         }
 
@@ -86,9 +94,15 @@ namespace Midterm
 
             //display feedback
             validlabel.Text = person.Feedback;
-            if (person.Feedback.Length == 0)
+
+            //add a record or update one depending on the mode we're in
+            if (person.Feedback.Length == 0 && editor == false)
             {
                 validlabel.Text = person.AddARecord();
+            }
+            else if (person.Feedback.Length == 0 && editor == true)
+            {
+                validlabel.Text = person.UpdatePerson(personID);
             }
         }
 
